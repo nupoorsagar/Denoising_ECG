@@ -1,0 +1,14 @@
+import os
+import gdown
+
+# Destination to save
+output = r"C:\Users\APOORVA\OneDrive\Desktop\CAPSTONE DATASET\mitbih_pipeline.zip"
+
+# Use gdown with folder ID
+url = "https://drive.google.com/uc?id=153u4mTTxUEanrGJqUoEkYxyjhO8eL6cM"
+gdown.download(url, output, quiet=False)
+
+# Unzip
+import zipfile
+with zipfile.ZipFile(output, 'r') as zip_ref:
+    zip_ref.extractall(r"C:\Users\APOORVA\OneDrive\Desktop\CAPSTONE DATASET")
