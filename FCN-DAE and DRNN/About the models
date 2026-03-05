@@ -1,0 +1,30 @@
+Deep Learning ECG Denoising Models
+
+Overview
+The ECG denoising capability is implemented using two deep learning models: Fully Convolutional Denoising Autoencoder (FCN‑DAE) and Convolutional Neural Network Denoising Autoencoder (CNN‑DAE). Both models learn how to transform a noisy ECG signal segment into a clean version by studying many examples of noisy–clean signal pairs. Once trained, they can automatically remove noise from new ECG recordings.
+
+Input to the Models
+After preprocessing and segmentation, each ECG signal is divided into fixed‑length windows (for example 512 samples). Each window is treated as a one‑dimensional sequence representing the ECG waveform over a short time interval. The signal amplitude is normalized so that the model focuses on waveform shape rather than absolute magnitude.
+
+FCN‑DAE Model Working
+The Fully Convolutional Denoising Autoencoder is built entirely from 1‑D convolution layers. These layers act like small pattern detectors that slide across the ECG waveform. During the encoding stage, the model extracts important signal characteristics such as sharp QRS peaks, smooth baseline trends, and rhythmic structures. Noise patterns are also captured as features. In the decoding stage, the model reconstructs a clean ECG by combining the learned features while suppressing those associated with noise. Because the architecture contains only convolution operations, the temporal alignment of ECG features is preserved, which helps maintain accurate waveform morphology.
+
+CNN‑DAE Model Working
+The CNN‑DAE extends the FCN idea by including pooling and upsampling operations. Pooling compresses the signal representation and allows the model to view a larger temporal context, meaning it can understand broader waveform patterns rather than only local details. This helps in removing complex or non‑stationary noise such as motion artifacts. During decoding, upsampling restores the signal to its original length and resolution. The final output layer produces a denoised ECG segment that closely matches the clean reference waveform.
+
+Feature Learning Behavior
+As training progresses, both models learn filters that respond strongly to true ECG structures (P waves, QRS complexes, T waves) and weakly to noise components. Early in training the models mainly smooth the signal. Later they begin reconstructing precise waveform shapes while removing specific noise types such as baseline drift or high‑frequency interference. This learned behavior makes them more adaptive than classical filters.
+
+Training Process
+During training, each noisy ECG segment is passed through the model to produce a predicted clean signal. This prediction is compared with the true clean segment using a reconstruction error measure. The model parameters are then adjusted to reduce this error. Repeating this process over many epochs allows the network to progressively improve its denoising capability. Both FCN‑DAE and CNN‑DAE follow this same learning procedure.
+
+Inference (Actual Denoising)
+Once training is complete, the models can denoise unseen ECG signals. A new ECG recording is preprocessed and segmented, and each segment is passed through the trained network. The outputs are clean ECG segments. These segments are then merged back together to reconstruct the full denoised signal. Because the models operate on learned waveform patterns rather than fixed frequency rules, they can adapt to diverse noise conditions.
+
+Comparison of FCN‑DAE and CNN‑DAE
+The FCN‑DAE typically preserves fine waveform details and temporal alignment very well because it avoids pooling compression. The CNN‑DAE, by contrast, captures broader contextual information and often achieves stronger noise suppression, especially for complex or long‑range artifacts. Using both models provides a balanced approach between morphology preservation and aggressive denoising.
+Role in the Overall System
+In the complete ECG denoising pipeline, classical preprocessing removes obvious deterministic noise such as baseline drift and power‑line interference. The FCN‑DAE and CNN‑DAE models then perform adaptive nonlinear denoising, targeting residual and complex noise components. The reconstructed output is a clean ECG signal suitable for visualization, analysis, and clinical interpretation.
+
+Conclusion
+The FCN‑DAE and CNN‑DAE models function as learned signal reconstructors that analyze noisy ECG segments, extract meaningful cardiac features, and rebuild clean waveforms while suppressing noise. Their convolutional structure enables preservation of ECG morphology, and their data‑driven learning allows effective removal of diverse noise types beyond the capability of traditional filters.
